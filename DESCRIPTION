@@ -1,6 +1,6 @@
 Package: betaMC
 Title: Monte Carlo for Regression Effect Sizes
-Version: 1.2.0
+Version: 1.3.0
 Authors@R: 
     person(given = "Ivan Jacob Agaloos",
            family = "Pesigan",
@@ -14,7 +14,7 @@ Description: Generates Monte Carlo confidence intervals
     and differences in standardized regression coefficients,
     for models fitted by lm().
     'betaMC' combines ideas from Monte Carlo confidence intervals for the indirect effect
-    (Preacher and Selig, 2012 <doi:10.1080/19312458.2012.679848>)
+    (Pesigan and Cheung, 2023 <doi:10.3758/s13428-023-02114-4>)
     and the sampling covariance matrix of regression coefficients
     (Dudgeon, 2017 <doi:10.1007/s11336-017-9563-z>)
     to generate confidence intervals effect sizes in regression.
@@ -25,13 +25,13 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Depends: R (>= 3.5.0)
-Imports: stats, methods
-Suggests: knitr, rmarkdown, testthat, MASS
+Imports: stats
+Suggests: knitr, rmarkdown, testthat, MASS, mice, Amelia
 RoxygenNote: 7.2.3
 NeedsCompilation: no
-Packaged: 2023-04-13 02:47:40 UTC; r1091537
+Packaged: 2023-08-21 19:55:57 UTC; root
 Author: Ivan Jacob Agaloos Pesigan [aut, cre, cph]
     (<https://orcid.org/0000-0003-4818-8420>)
 Maintainer: Ivan Jacob Agaloos Pesigan <r.jeksterslab@gmail.com>
 Repository: CRAN
-Date/Publication: 2023-04-13 11:30:02 UTC
+Date/Publication: 2023-08-23 00:00:22 UTC

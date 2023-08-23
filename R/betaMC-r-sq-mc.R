@@ -18,7 +18,7 @@
 #'   of class `betamc` which is a list with the following elements:
 #'   \describe{
 #'     \item{call}{Function call.}
-#'     \item{object}{The function argument `object`.}
+#'     \item{args}{Function arguments.}
 #'     \item{thetahatstar}{Sampling distribution of
 #'       \eqn{R^{2}} and \eqn{\bar{R}^{2}}.}
 #'     \item{vcov}{Sampling variance-covariance matrix of
@@ -31,29 +31,57 @@
 #' @inheritParams BetaMC
 #'
 #' @examples
-#' # Fit the regression model
+#' # Data ---------------------------------------------------------------------
+#' data("nas1982", package = "betaMC")
+#'
+#' # Fit Model in lm ----------------------------------------------------------
 #' object <- lm(QUALITY ~ NARTIC + PCTGRT + PCTSUPP, data = nas1982)
-#' # Generate the sampling distribution of parameter estimates
-#' # (use a large R, for example, R = 20000 for actual research)
-#' mc <- MC(object, R = 100)
-#' # Generate confidence intervals for standardized regression slopes
-#' rsq <- RSqMC(mc)
-#' # Methods --------------------------------------------------------
-#' print(rsq)
-#' summary(rsq)
-#' coef(rsq)
-#' vcov(rsq)
-#' confint(rsq, level = 0.95)
-#' @export
+#'
+#' # MC -----------------------------------------------------------------------
+#' mc <- MC(
+#'   object,
+#'   R = 100, # use a large value e.g., 20000L for actual research
+#'   seed = 0508
+#' )
+#'
+#' # RSqMC --------------------------------------------------------------------
+#' out <- RSqMC(mc, alpha = 0.05)
+#'
+#' ## Methods -----------------------------------------------------------------
+#' print(out)
+#' summary(out)
+#' coef(out)
+#' vcov(out)
+#' confint(out, level = 0.95)
+#'
 #' @family Beta Monte Carlo Functions
 #' @keywords betaMC rsq
-RSqMC <- function(object) {
+#' @export
+RSqMC <- function(object,
+                  alpha = c(0.05, 0.01, 0.001)) {
   stopifnot(
-    methods::is(
+    inherits(
       object,
       "mc"
     )
   )
+  if (object$fun == "MCMI") {
+    est <- colMeans(
+      do.call(
+        what = "rbind",
+        args = lapply(
+          X = object$args$mi_output$lm_process,
+          FUN = function(x) {
+            return(
+              x$rsq
+            )
+          }
+        )
+      )
+    )
+  } else {
+    est <- object$lm_process$rsq
+  }
   thetahatstar <- lapply(
     X = object$thetahatstar,
     FUN = function(x) {
@@ -75,9 +103,12 @@ RSqMC <- function(object) {
   )
   out <- list(
     call = match.call(),
-    object = object,
+    args = list(
+      object = object,
+      alpha = alpha
+    ),
     thetahatstar = thetahatstar,
-    est = object$lm_process$rsq,
+    est = est,
     fun = "RSqMC"
   )
   class(out) <- c(

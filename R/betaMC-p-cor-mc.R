@@ -17,7 +17,7 @@
 #'   of class `betamc` which is a list with the following elements:
 #'   \describe{
 #'     \item{call}{Function call.}
-#'     \item{object}{The function argument `object`.}
+#'     \item{args}{Function arguments.}
 #'     \item{thetahatstar}{Sampling distribution of
 #'       \eqn{r^{2}_{p}}.}
 #'     \item{vcov}{Sampling variance-covariance matrix of
@@ -30,31 +30,59 @@
 #' @inheritParams BetaMC
 #'
 #' @examples
-#' # Fit the regression model
+#' # Data ---------------------------------------------------------------------
+#' data("nas1982", package = "betaMC")
+#'
+#' # Fit Model in lm ----------------------------------------------------------
 #' object <- lm(QUALITY ~ NARTIC + PCTGRT + PCTSUPP, data = nas1982)
-#' # Generate the sampling distribution of parameter estimates
-#' # (use a large R, for example, R = 20000 for actual research)
-#' mc <- MC(object, R = 100)
-#' # Generate confidence intervals for standardized regression slopes
-#' rp <- PCorMC(mc)
-#' # Methods --------------------------------------------------------
-#' print(rp)
-#' summary(rp)
-#' coef(rp)
-#' vcov(rp)
-#' confint(rp, level = 0.95)
-#' @export
+#'
+#' # MC -----------------------------------------------------------------------
+#' mc <- MC(
+#'   object,
+#'   R = 100, # use a large value e.g., 20000L for actual research
+#'   seed = 0508
+#' )
+#'
+#' # PCorMC -------------------------------------------------------------------
+#' out <- PCorMC(mc, alpha = 0.05)
+#'
+#' ## Methods -----------------------------------------------------------------
+#' print(out)
+#' summary(out)
+#' coef(out)
+#' vcov(out)
+#' confint(out, level = 0.95)
+#'
 #' @family Beta Monte Carlo Functions
 #' @keywords betaMC pcor
-PCorMC <- function(object) {
+#' @export
+PCorMC <- function(object,
+                   alpha = c(0.05, 0.01, 0.001)) {
   stopifnot(
-    methods::is(
+    inherits(
       object,
       "mc"
     )
   )
   if (object$lm_process$p < 2) {
     stop("Two or more regressors is required.")
+  }
+  if (object$fun == "MCMI") {
+    est <- colMeans(
+      do.call(
+        what = "rbind",
+        args = lapply(
+          X = object$args$mi_output$lm_process,
+          FUN = function(x) {
+            return(
+              x$pcor
+            )
+          }
+        )
+      )
+    )
+  } else {
+    est <- object$lm_process$pcor
   }
   sr <- SCorMC(object)
   sr <- sr$thetahatstar
@@ -74,17 +102,12 @@ PCorMC <- function(object) {
       )
     }
   )
-  est <- .PCorSq(
-    srsq = .SPCor(
-      betastar = object$lm_process$betastar,
-      sigmacapx = object$lm_process$sigmacapx
-    )^2,
-    rsq = object$lm_process$summary_lm$r.squared
-  )
-  names(est) <- object$lm_process$xnames
   out <- list(
     call = match.call(),
-    object = object,
+    args = list(
+      object = object,
+      alpha = alpha
+    ),
     thetahatstar = thetahatstar,
     est = est,
     fun = "PCorMC"

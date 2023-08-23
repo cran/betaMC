@@ -44,7 +44,7 @@ sampling covariance matrix.
 heteroskedasticity-consistent sampling covariance matrix.}
 
 \item{g1}{Numeric.
-\code{g1} value for \code{type = "hc4m"} or \code{type = "hc5"}.}
+\code{g1} value for \code{type = "hc4m"}.}
 
 \item{g2}{Numeric.
 \code{g2} value for \code{type = "hc4m"}.}
@@ -84,6 +84,7 @@ of class \code{mc} which is a list with the following elements:
 \item{scale}{Sampling variance-covariance matrix of parameter estimates.}
 \item{location}{Parameter estimates.}
 \item{thetahatstar}{Sampling distribution of parameter estimates.}
+\item{fun}{Function used ("MC").}
 }
 }
 \description{
@@ -129,11 +130,28 @@ to ensure that the model-implied covariance matrix
 is positive definite.
 }
 \examples{
-# Fit the regression model
+# Data ---------------------------------------------------------------------
+data("nas1982", package = "betaMC")
+
+# Fit Model in lm ----------------------------------------------------------
 object <- lm(QUALITY ~ NARTIC + PCTGRT + PCTSUPP, data = nas1982)
-# Generate the sampling distribution of parameter estimates
-# (use a large R, for example, R = 20000 for actual research)
-MC(object, R = 100)
+
+# MC -----------------------------------------------------------------------
+mc <- MC(
+  object,
+  R = 100, # use a large value e.g., 20000L for actual research
+  seed = 0508
+)
+mc
+# The `mc` object can be passed as the first argument
+# to the following functions
+#   - BetaMC
+#   - DeltaRSqMC
+#   - DiffBetaMC
+#   - PCorMC
+#   - RSqMC
+#   - SCorMC
+
 }
 \references{
 Dudgeon, P. (2017).
@@ -152,6 +170,7 @@ Other Beta Monte Carlo Functions:
 \code{\link{BetaMC}()},
 \code{\link{DeltaRSqMC}()},
 \code{\link{DiffBetaMC}()},
+\code{\link{MCMI}()},
 \code{\link{PCorMC}()},
 \code{\link{RSqMC}()},
 \code{\link{SCorMC}()}

@@ -1,6 +1,15 @@
+# betaMC 1.3.0
+
+## Minor
+
+* Added the `MCMI()` function
+  to perform  Monte Carlo simulation of parameters
+  for data sets with missing values
+  using multiple imputation.
+
 # betaMC 1.2.0
 
-## Major
+## Minor
 
 * The Monte Carlo simulation of parameters
   is done by the `MC()` function.
