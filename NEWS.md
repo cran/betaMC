@@ -1,3 +1,9 @@
+# betaMC 1.3.1
+
+## Patch
+
+* Minor edits to setting seed.
+
 # betaMC 1.3.0
 
 ## Minor
