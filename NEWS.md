@@ -1,3 +1,9 @@
+# betaMC 1.3.2
+
+## Patch
+
+* Minor documentation edits.
+
 # betaMC 1.3.1
 
 ## Patch
