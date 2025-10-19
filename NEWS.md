@@ -1,3 +1,9 @@
+# betaMC 1.3.3
+
+## Patch
+
+* Minor edits to methods.
+
 # betaMC 1.3.2
 
 ## Patch

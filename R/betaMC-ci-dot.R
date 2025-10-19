@@ -17,12 +17,6 @@
 #' @noRd
 .CI <- function(object,
                 alpha = NULL) {
-  stopifnot(
-    inherits(
-      object,
-      "betamc"
-    )
-  )
   if (is.null(alpha)) {
     alpha <- object$args$alpha
   }
@@ -50,7 +44,5 @@
     args = ci
   )
   rownames(ci) <- names(thetahat)
-  return(
-    ci
-  )
+  ci
 }

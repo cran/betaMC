@@ -32,45 +32,10 @@ print.betamc <- function(x,
                          alpha = NULL,
                          digits = 4,
                          ...) {
-  type <- x$args$object$args$type
-  if (x$fun == "BetaMC") {
-    label <- "Standardized regression slopes"
-  }
-  if (x$fun == "RSqMC") {
-    label <- "R-squared and adjusted R-squared"
-  }
-  if (x$fun == "SCorMC") {
-    label <- "Semipartial correlations"
-  }
-  if (x$fun == "DeltaRSqMC") {
-    label <- "Improvement in R-squared"
-  }
-  if (x$fun == "PCorMC") {
-    label <- "Squared partial correlations"
-  }
-  if (x$fun == "DiffBetaMC") {
-    label <- "Differences of standardized regression slopes"
-  }
-  cat("Call:\n")
-  base::print(x$call)
-  cat(
-    paste0(
-      "\n",
-      label,
-      "\n",
-      "type = ",
-      "\"",
-      type,
-      "\"",
-      "\n"
-    )
-  )
-  base::print(
-    round(
-      .CI(
-        object = x,
-        alpha = alpha
-      ),
+  print.summary.betamc(
+    summary.betamc(
+      object = x,
+      alpha = alpha,
       digits = digits
     )
   )
@@ -111,6 +76,47 @@ summary.betamc <- function(object,
                            alpha = NULL,
                            digits = 4,
                            ...) {
+  ci <- .CI(
+    object = object,
+    alpha = alpha
+  )
+  print_summary <- round(
+    x = ci,
+    digits = digits
+  )
+  attr(
+    x = ci,
+    which = "fit"
+  ) <- object
+  attr(
+    x = ci,
+    which = "print_summary"
+  ) <- print_summary
+  attr(
+    x = ci,
+    which = "alpha"
+  ) <- alpha
+  attr(
+    x = ci,
+    which = "digits"
+  ) <- digits
+  class(ci) <- "summary.betamc"
+  ci
+}
+
+#' @noRd
+#' @keywords internal
+#' @exportS3Method print summary.betamc
+print.summary.betamc <- function(x,
+                                 ...) {
+  print_summary <- attr(
+    x = x,
+    which = "print_summary"
+  )
+  object <- attr(
+    x = x,
+    which = "fit"
+  )
   type <- object$args$object$args$type
   if (object$fun == "BetaMC") {
     label <- "Standardized regression slopes"
@@ -144,15 +150,8 @@ summary.betamc <- function(object,
       "\n"
     )
   )
-  return(
-    round(
-      .CI(
-        object = object,
-        alpha = alpha
-      ),
-      digits = digits
-    )
-  )
+  print(print_summary)
+  invisible(x)
 }
 
 #' Sampling Variance-Covariance Matrix Method for an Object of Class
@@ -174,9 +173,7 @@ vcov.betamc <- function(object,
   )
   thetahatstar <- unname(thetahatstar)
   colnames(thetahatstar) <- names(object$est)
-  return(
-    stats::var(thetahatstar)
-  )
+  stats::var(thetahatstar)
 }
 
 #' Estimated Parameter Method for an Object of Class
@@ -192,9 +189,7 @@ vcov.betamc <- function(object,
 #' @export
 coef.betamc <- function(object,
                         ...) {
-  return(
-    object$est
-  )
+  object$est
 }
 
 #' Confidence Intervals Method for an Object of Class
@@ -235,7 +230,5 @@ confint.betamc <- function(object,
     x = varnames
   )
   colnames(ci) <- varnames
-  return(
-    ci
-  )
+  ci
 }

@@ -59,8 +59,8 @@ DiffBetaMC <- function(object,
                        alpha = c(0.05, 0.01, 0.001)) {
   stopifnot(
     inherits(
-      object,
-      "mc"
+      x = object,
+      what = "mc"
     )
   )
   if (object$lm_process$p < 2) {
@@ -73,9 +73,7 @@ DiffBetaMC <- function(object,
         args = lapply(
           X = object$args$mi_output$lm_process,
           FUN = function(x) {
-            return(
-              x$dif_betastar
-            )
+            x$dif_betastar
           }
         )
       )
@@ -124,7 +122,5 @@ DiffBetaMC <- function(object,
     "betamc",
     class(out)
   )
-  return(
-    out
-  )
+  out
 }

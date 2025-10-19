@@ -44,7 +44,7 @@
 #' *Multivariate Behavioral Research*, *39*(1), 99-128.
 #' \doi{10.1207/s15327906mbr3901_4}
 #'
-#' Pesigan, I. J. A., & Cheung, S. F. (2023).
+#' Pesigan, I. J. A., & Cheung, S. F. (2024).
 #' Monte Carlo confidence intervals for the indirect effect with missing data.
 #' *Behavior Research Methods*.
 #' \doi{10.3758/s13428-023-02114-4}
@@ -100,6 +100,12 @@ MCMI <- function(object,
                  tol = 1e-06,
                  fixed_x = FALSE,
                  seed = NULL) {
+  stopifnot(
+    inherits(
+      x = object,
+      what = "lm"
+    )
+  )
   lm_process <- .ProcessLM(object)
   stopifnot(
     type %in% c(
@@ -152,8 +158,8 @@ MCMI <- function(object,
   }
   if (
     inherits(
-      mi,
-      "mids"
+      x = mi,
+      what = "mids"
     )
   ) {
     imp <- mice::complete(
@@ -162,15 +168,15 @@ MCMI <- function(object,
     )
   } else if (
     inherits(
-      mi,
-      "amelia"
+      x = mi,
+      what = "amelia"
     )
   ) {
     imp <- mi$imputations
   } else if (
     inherits(
-      mi,
-      "list"
+      x = mi,
+      what = "list"
     )
   ) {
     imp <- mi
@@ -181,9 +187,7 @@ MCMI <- function(object,
     X = imp,
     FUN = function(x) {
       call1$data <- x
-      return(
-        eval(expr = call1)
-      )
+      eval(expr = call1)
     }
   )
   lm_processes <- lapply(
@@ -279,7 +283,5 @@ MCMI <- function(object,
     "mc",
     class(out)
   )
-  return(
-    out
-  )
+  out
 }

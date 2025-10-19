@@ -60,8 +60,8 @@ PCorMC <- function(object,
                    alpha = c(0.05, 0.01, 0.001)) {
   stopifnot(
     inherits(
-      object,
-      "mc"
+      x = object,
+      what = "mc"
     )
   )
   if (object$lm_process$p < 2) {
@@ -74,9 +74,7 @@ PCorMC <- function(object,
         args = lapply(
           X = object$args$mi_output$lm_process,
           FUN = function(x) {
-            return(
-              x$pcor
-            )
+            x$pcor
           }
         )
       )
@@ -94,11 +92,9 @@ PCorMC <- function(object,
     SIMPLIFY = FALSE,
     FUN = function(sr,
                    rsq) {
-      return(
-        .PCorSq(
-          srsq = sr^2,
-          rsq = rsq[1]
-        )
+      .PCorSq(
+        srsq = sr^2,
+        rsq = rsq[1]
       )
     }
   )
@@ -116,7 +112,5 @@ PCorMC <- function(object,
     "betamc",
     class(out)
   )
-  return(
-    out
-  )
+  out
 }
